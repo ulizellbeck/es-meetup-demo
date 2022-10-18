@@ -88,6 +88,26 @@ services:
     depends_on:
       - elasticsearch
 
+  elasticsearch-seed:
+    container_name: elasticsearch-seed
+    build:
+      context: elasticsearch-seed-main/
+    environment:
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+      - INDEX_NAME=my-index
+      - USER=elastic
+      - PASSWORD=changeme
+    volumes:
+      - ./elasticsearch-seed-main/example/my-custom-index-settings.json:/seed/index-settings.json
+      - ./elasticsearch-seed-main/example/my-custom-index-bulk-payload.json:/seed/index-bulk-payload.json
+      - ./elasticsearch-seed-main/index-templates:/seed/index-templates
+      - ./elasticsearch-seed-main/search-templates:/seed/search-templates
+    networks:
+      - elk
+    depends_on:
+    - elasticsearch
+
+
 networks:
   elk:
     driver: bridge
