@@ -4,7 +4,7 @@
     "source": {
       "query": {
         "match": {
-          "message": "{{query_string}}"
+          "name": "{{query_string}}"
         }
       },
       "from": "{{from}}",
