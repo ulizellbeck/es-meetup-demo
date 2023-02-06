@@ -1,0 +1,12 @@
+{
+    "index_patterns": ["meetup-*"], 
+    "template": {
+      "mappings": {
+        "properties": {
+          "age": {
+            "type": "integer"
+          }
+        }
+      }
+    }
+  }
