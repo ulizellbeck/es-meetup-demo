@@ -12,4 +12,6 @@ ENV PASSWORD=$PASSWORD
 
 COPY elasticsearch-seed-script.sh .
 
+COPY index-templates/meetup.json /seed/index-templates/meetup.json
+
 ENTRYPOINT ["sh", "elasticsearch-seed-script.sh"]
