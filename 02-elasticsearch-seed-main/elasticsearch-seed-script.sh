@@ -14,5 +14,5 @@ do
      filename=$(basename $f)
      template_id="${filename%.*}"
      echo "Loading $template_id template..."
-     curl -s  -H 'Content-Type: application/json' -XPUT "$ELASTICSEARCH_URL:9201/_template/$template_id" -d@$f
+     curl -s  -H 'Content-Type: application/json' -XPUT "$ELASTICSEARCH_URL/_template/$template_id" -d@$f
 done
