@@ -10,7 +10,7 @@ node {
     stage('Build image') {
         /* This builds the actual image; synonymous to
          * docker build on the command line */
-
+        /* app = docker.build("modellagenten/elk-jenkins","./01-elasticsearch-node1") */
         app = docker.build("modellagenten/elk-jenkins","./02-elasticsearch-seed-main")
     }
 
