@@ -10,12 +10,6 @@ until $(curl -XGET --insecure --user $USER:$PASSWORD "$ELASTICSEARCH_URL/_cluste
     sleep 5
 done
 
-# Create the index
-curl -XPUT --insecure --user $USER:$PASSWORD "$ELASTICSEARCH_URL/$INDEX_NAME" -H 'Content-Type: application/json' -d @index-settings.json
-
-# The bulk operation to insert multiple documents into the index
-curl -XPOST --insecure --user $USER:$PASSWORD "$ELASTICSEARCH_URL/$INDEX_NAME/_bulk" -H 'Content-Type: application/x-ndjson' --data-binary @index-bulk-payload.json
-
 # Load any declared extra index templates
 INDEX_TEMPLATES=/seed/index-templates/*.json
 for f in $INDEX_TEMPLATES
@@ -23,23 +17,5 @@ do
      filename=$(basename $f)
      template_id="${filename%.*}"
      echo "Loading $template_id template..."
-     curl -s  -H 'Content-Type: application/json' -XPUT --insecure --user $USER:$PASSWORD http://elasticsearch:9200/_template/$template_id -d@$f
-     #We assume we want an index pattern in Kibana.
-     #curl -s -XPUT http://elasticsearch:9200/.kibana/index-pattern/$template_id-* \
-     #-d "{\"title\" : \"$template_id-*\",  \"timeFieldName\": \"@timestamp\"}"
+     curl -s  -H 'Content-Type: application/json' -XPUT --insecure --user $USER:$PASSWORD http://168.119.189.95:9201/_template/$template_id -d@$f
 done
-
-
-SEARCH_TEMPLATES=/seed/search-templates/*.json
-for f in $SEARCH_TEMPLATES
-do
-     filename=$(basename $f)
-     template_id="${filename%.*}"
-     echo "Loading $template_id template..."
-     curl -s  -H 'Content-Type: application/json' -XPUT --insecure --user $USER:$PASSWORD http://elasticsearch:9200/_scripts/$template_id -d@$f
-     #We assume we want an index pattern in Kibana.
-     #curl -s -XPUT http://elasticsearch:9200/.kibana/index-pattern/$template_id-* \
-     #-d "{\"title\" : \"$template_id-*\",  \"timeFieldName\": \"@timestamp\"}"
-done
-
-
