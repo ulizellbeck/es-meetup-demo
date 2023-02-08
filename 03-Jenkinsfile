@@ -1,5 +1,4 @@
 node {
-    def app
 
     parameters {
         choice(name: 'STAGE', choices: ['dev','test','prod'])
