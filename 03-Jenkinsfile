@@ -1,12 +1,13 @@
-node {
-
-    parameters {
+node(){
+    properties([
+       parameters([
         choice(name: 'STAGE', choices: ['dev','test','prod'])
         choice(name: 'BRANCH', choices: ['0.01','master','develop'])
         booleanParam(name: 'start', defaultValue: false, description: 'Start ES')
         booleanParam(name: 'configure', defaultValue: false, description: 'Configure ES')
         booleanParam(name: 'delete', defaultValue: false, description: 'Delete ES Configuration')
-    }
+        ])
+    ])
 
     stage('Run Playbook') {
        def playbook = '03-elastic-ansible.yml'
