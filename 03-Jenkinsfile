@@ -1,4 +1,4 @@
-node(){
+node{
     properties([
        parameters([
         choice(name: 'STAGE', choices: ['dev','test','prod'])
@@ -9,13 +9,10 @@ node(){
         ])
     ])
 
-    stage('Run Playbook') {
-       def playbook = '03-elastic-ansible.yml'
-        dir('/root/ansible') {
-          ansiblePlaybook  playbook: playbook,
+    stage('Ansible') {
+    ansiblePlaybook(playbook: '03-elastic-ansible.yml',
             colorized: false,
-            inventory: '/root/ansible/hosts',
-            tags: params.tags
-        }
-    }
+            inventory: 'hosts'
+            )
+}
 }

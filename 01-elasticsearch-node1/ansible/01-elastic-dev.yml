@@ -1,0 +1,38 @@
+- name: Elasticsearch
+  hosts: elk-dev01
+  connection: local
+  gather_facts: no
+  vars:
+    project_name: es
+    es_version: '8'
+  tasks:
+    - name: Docker Network
+      docker_network:
+        state: 'present'
+        name: '{{ project_name }}_network'
+
+    - name: ES Docker Volume
+      docker_volume:
+        state: 'present'
+        name: '{{ project_name }}_volume'
+
+    - name: "Elasticsearch Docker Container"
+      docker_container:
+        name: "{{ project_name }}_01"
+        state: started
+        image: 'modellagenten/elk-jenkins:{{ es_version }}'
+        ports:
+          - "9201:9201"
+        ulimits:
+          - 'memlock:-1:-1'
+        volumes:
+          - "{{ project_name }}_volume:/usr/share/elasticsearch/data"
+        env:
+          node.name: es01
+          cluster.initial_master_nodes: es01
+          cluster.name: docker-cluster
+          bootstrap.memory_lock: 'true'
+          'ES_JAVA_OPTS': '-Xms512m -Xmx512m'
+          xpack.security.enabled: 'false'
+          http.port: '9201'
+          transport.port: '9301'

@@ -1,0 +1,62 @@
+- name: Elasticsearch
+  hosts: elk-dev01
+  connection: local
+  gather_facts: no
+  vars:
+    project_name: es-ansible
+  tasks:
+    - name: Docker Network
+      docker_network:
+        state: 'present'
+        name: '{{ project_name }}_network'
+      tags:
+        - start
+
+    - name: ES Docker Volume
+      docker_volume:
+        state: 'present'
+        name: '{{ project_name }}_volume'
+      tags:
+        - start
+
+    - name: "Elasticsearch Docker Container"
+      docker_container:
+        name: "{{ project_name }}_01"
+        state: started
+        image: 'docker.elastic.co/elasticsearch/elasticsearch:8.5.3'
+        ports:
+          - "9203:9203"
+        ulimits:
+          - 'memlock:-1:-1'
+        volumes:
+          - "{{ project_name }}_volume:/usr/share/elasticsearch/data"
+        env:
+          node.name: es01
+          cluster.initial_master_nodes: es01
+          cluster.name: docker-cluster
+          bootstrap.memory_lock: 'true'
+          'ES_JAVA_OPTS': '-Xms512m -Xmx512m'
+          xpack.security.enabled: 'false'
+          http.port: '9203'
+          transport.port: '9303'
+      tags: 
+        - start
+    - name: "create index_template"
+      uri:
+        url: "http://168.119.189.95:9203/_index_template/meetup"
+        method: "PUT"
+        body: "{{ lookup('file','meetup.json')}}"
+        body_format: "json"
+        return_content: "false"
+        status_code: [200,409]
+      tags:
+        - configure
+
+    - name: "delete index_template"
+      uri:
+        url: "http://168.119.189.95:9203/_index_template/meetup"
+        method: "DELETE"
+        return_content: "false"
+        status_code: [200,409]
+      tags:
+        - delete
